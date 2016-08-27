@@ -3,6 +3,9 @@
 
 .idea/**
 
+# Python Compiled is going down
+**.pyc
+
 # User-specific stuff:
 .idea/workspace.xml
 .idea/tasks.xml
