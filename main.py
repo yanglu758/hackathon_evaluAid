@@ -18,10 +18,11 @@
 # foreign imports
 import webapp2
 
-
 # local imports
-from controllers.HomeHandler import MainHandler
+from controllers.HomeHandler import HomeHandler
+from controllers.DashboardHandler import DashboardHandler
 
 app = webapp2.WSGIApplication([
-    ('/', MainHandler)
+    ('/', HomeHandler),
+    ('/dashboard', DashboardHandler)
 ], debug=True)
