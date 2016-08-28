@@ -125,7 +125,8 @@ class HomeHandler(webapp2.RequestHandler):
             'type_credit': {},
             'graph': {
                 'debit': {},
-                'credit': {}
+                'credit': {},
+                'debit_and_credit': {}
             }
         }
 
@@ -134,6 +135,13 @@ class HomeHandler(webapp2.RequestHandler):
             amount = float(transaction['TransactionAmount'])
             mcc_code = transaction['SICMCCCode']
             transaction_date = transaction['TransactionPostDate']
+
+            # For graph
+            if transaction_date in template_values['graph']['debit_and_credit']:
+                value = template_values['graph']['debit_and_credit'][transaction_date]
+                template_values['graph']['debit_and_credit'][transaction_date] = value + amount
+            else:
+                template_values['graph']['debit_and_credit'][transaction_date] = amount
 
             # Consolidate Credit / Debit
             if transaction.get('TransactionType') == 'Debit' and amount > 0:
