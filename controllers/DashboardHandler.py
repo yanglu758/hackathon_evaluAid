@@ -74,6 +74,17 @@ class DashboardHandler(webapp2.RequestHandler):
         }
     }
 
+    def mockDeposits(self, json, minDate, maxDate):
+        mock_revenue = {minDate: 4365.5, maxDate: 675.76}
+
+        json['revenue'] = mock_revenue
+        json['total_revenue'] = 0
+
+        for date, revenue in mock_revenue.iteritems():
+            json['total_revenue'] += revenue
+
+        return json
+
     def setMonetaryValue(self, json):
         for key, value in json.iteritems():
             if isinstance(value, float) or isinstance(value, int):
@@ -91,15 +102,34 @@ class DashboardHandler(webapp2.RequestHandler):
             'type_credit': {},
             'graph': {
                 'debit': {},
-                'credit': {}
-            }
+                'credit': {},
+                'debit_and_credit': {}
+            },
+            'min_date': content[0].get('TransactionPostDate'),
+            'max_date': content[-1].get('TransactionPostDate')
         }
+
+        template_values = self.mockDeposits(template_values, template_values['min_date'], template_values['max_date'])
 
         # Iteration
         for transaction in content:
             amount = float(transaction['TransactionAmount'])
             mcc_code = transaction['SICMCCCode']
             transaction_date = transaction['TransactionPostDate']
+
+            # Get date
+            if template_values['min_date'] > transaction['TransactionPostDate']:
+                template_values['min_date'] = transaction['TransactionPostDate']
+
+            if template_values['max_date'] < transaction['TransactionPostDate']:
+                template_values['max_date'] = transaction['TransactionPostDate']
+
+            # For graph
+            if transaction_date in template_values['graph']['debit_and_credit']:
+                value = template_values['graph']['debit_and_credit'][transaction_date]
+                template_values['graph']['debit_and_credit'][transaction_date] = value + amount
+            else:
+                template_values['graph']['debit_and_credit'][transaction_date] = amount
 
             # Consolidate Credit / Debit
             if transaction.get('TransactionType') == 'Debit' and amount > 0:
