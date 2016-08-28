@@ -25,6 +25,5 @@ from controllers.LoginHandler import LoginHandler
 from controllers.ProjectHandler import ProjectHandler
 
 app = webapp2.WSGIApplication([
-    ('/', HomeHandler),
-    ('/dashboard', DashboardHandler)
+    ('/', HomeHandler)
 ], debug=True)
