@@ -5,7 +5,6 @@ import urllib2
 import webapp2
 
 from google.appengine.api import urlfetch
-from operator import itemgetter
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     autoescape=True,
@@ -44,7 +43,7 @@ class DashboardHandler(webapp2.RequestHandler):
                 "accountNumber": "4081840012169457",
                 "requestType": "StatementMonth",
                 "statementMonth": "10",
-                "tranSequence": "Reverse",
+                "tranSequence": "Chronological",
                 "authIndicator": "ExcludeAuth",
                 "continueNumber": "1",
                 "maxItems": "10000000"
@@ -131,10 +130,7 @@ class DashboardHandler(webapp2.RequestHandler):
                 .get('TransactionDetails')\
                 .get('TransactionData')
 
-            ordered_content = sorted(content, key=itemgetter('TransactionPostDate'))
-            ordered_content = self.monthly_processing(ordered_content)
-
-
+            ordered_content = self.monthly_processing(content)
             ordered_content = self.setMonetaryValue(ordered_content)
 
             # template = JINJA_ENVIRONMENT.get_template('dashboard.html')
