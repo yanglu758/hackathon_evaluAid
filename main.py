@@ -27,6 +27,7 @@ from controllers.DealHandler import DealHandler
 
 app = webapp2.WSGIApplication([
     ('/', HomeHandler),
+    ('/dashboard', DashboardHandler),
     ('/project', ProjectHandler),
     ('/deal', DealHandler)
 ], debug=True)
