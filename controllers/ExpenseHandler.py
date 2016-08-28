@@ -64,6 +64,8 @@ class ExpenseHandler(webapp2.RequestHandler):
     def monthly_processing(self, content):
         template_values = {
             'expense': {},
+            'processed_expense': [],
+            'tabular_expense': [],
             'total_expense': 0
         }
 
@@ -71,14 +73,20 @@ class ExpenseHandler(webapp2.RequestHandler):
         for transaction in content:
             amount = float(transaction['TransactionAmount'])
             mcc_code = transaction['SICMCCCode']
+            transaction_date = transaction['TransactionPostDate']
 
             template_values['total_expense'] += amount
 
-            if mcc_code in template_values['expense']:
+            template_values['tabular_expense'].append((transaction_date, mcc_code, amount))
+
+            if mcc_code in template_values['expense'].iteritems():
                 value = template_values.get('expense')[mcc_code]
                 template_values.get('expense')[mcc_code] = value + amount
             else:
                 template_values.get('expense')[mcc_code] = amount
+
+        for code in template_values['expense']:
+            template_values['processed_expense'].append({'label': code, 'value': template_values['expense'][code]})
 
         return template_values
 
@@ -104,9 +112,8 @@ class ExpenseHandler(webapp2.RequestHandler):
             ordered_content = self.monthly_processing(content)
             ordered_content = self.setMonetaryValue(ordered_content)
 
-            # template = JINJA_ENVIRONMENT.get_template('dashboard.html')
-            # self.response.write(template.render(template_values))
-            self.response.write(ordered_content)
+            template = JINJA_ENVIRONMENT.get_template('expense.html')
+            self.response.write(template.render(ordered_content))
         else:
             self.response.write("Error Code: " + response.status_code)
 
