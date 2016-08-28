@@ -12,7 +12,7 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 )
 
 
-class DealHandler(webapp2.RequestHandler):
+class DealHandlerTwo(webapp2.RequestHandler):
     transaction_history_url = "http://api108094sandbox.gateway.akana.com/IVRCCMaintenanceREST/account/transactionHistory"
     transaction_history_hardcodedData = {
         "transactionIdentifier": "0f8fad5b-d9cb-469f-a165-70867728950e",

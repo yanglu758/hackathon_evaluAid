@@ -24,10 +24,12 @@ from controllers.LoginHandler import LoginHandler
 from controllers.ForecastHandler import ForecastHandler
 from controllers.ForecastHandlerTwo import ForecastTwoHandler
 from controllers.DealHandler import DealHandler
+from controllers.DealHandlerTwo import DealHandlerTwo
 
 app = webapp2.WSGIApplication([
     ('/', HomeHandler),
     ('/forecast', ForecastHandler),
     ('/forecasti', ForecastTwoHandler),
-    ('/deal', DealHandler)
+    ('/deal', DealHandler),
+    ('/deali', DealHandlerTwo)
 ], debug=True)
