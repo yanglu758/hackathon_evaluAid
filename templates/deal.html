@@ -1,8 +1,375 @@
 {% extends "dashboard.html" %}
 {% block content %}
-<div class="row">
-    <div class="col-lg-12">
-        <h1 class="page-header">Deal</h1>
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Evalu-Aid</h1>
+                </div>
+            </div>
+
+            <!-- /.row -->
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">${{ total_debit }}</div>
+                                    <div>Projected Total Debit</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">View Details</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-green">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">${{ total_credit }}</div>
+                                    <div>Projected Total Credit</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">View Details</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-yellow">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">$3,456</div>
+                                    <div>Projected Revenue</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">View Details</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="panel panel-red">
+                        <div class="panel-heading">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                </div>
+                                <div class="col-xs-9 text-right">
+                                    <div class="huge">$43,665</div>
+                                    <div>Balance</div>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="#">
+                            <div class="panel-footer">
+                                <span class="pull-left">View Details</span>
+                                <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                                <div class="clearfix"></div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!-- /.row -->
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <i class="fa fa-bar-chart-o fa-fw"></i> Projected Expenses
+                            <!--<div class="pull-right">-->
+                                <!--<div class="btn-group">-->
+                                    <!--<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">-->
+                                        <!--Actions-->
+                                        <!--<span class="caret"></span>-->
+                                    <!--</button>-->
+                                    <!--<ul class="dropdown-menu pull-right" role="menu">-->
+                                        <!--<li><a href="#">Action</a>-->
+                                        <!--</li>-->
+                                        <!--<li><a href="#">Another action</a>-->
+                                        <!--</li>-->
+                                        <!--<li><a href="#">Something else here</a>-->
+                                        <!--</li>-->
+                                        <!--<li class="divider"></li>-->
+                                        <!--<li><a href="#">Separated link</a>-->
+                                        <!--</li>-->
+                                    <!--</ul>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="morris-area-chart" data-show-projection="false"></div>
+                            <script>
+                                var graph_data = "{{ graph| safe }}";
+                                console.log(typeof graph_data);
+                                graph_data = graph_data.replace(/'/g, '"');
+                                console.log(graph_data);
+                                var graph = JSON.parse(graph_data);
+                                console.log(graph);
+                                var data = graph['debit_and_credit'];
+                                var pointSize=0;
+                                var output = [];
+
+                                var chartist = document.getElementById('morris-area-chart');
+                                var isShown = $(chartist).attr('data-show-projection');
+
+                                var rand1 = function() {
+                                  var guess = Math.random();
+
+                                  if (guess < 0.233333333333) return 4.47;
+                                  else if (guess < 0.666666666666666) return 1.12;
+                                  else return 1.46;
+                                };
+
+                                console.log(output);
+                                console.log(pointSize);
+
+                                $(function() {
+
+                                    console.log("ENTER HERE ::: " + isShown);
+
+                                    if (isShown == "true") {
+                                    for(var key in data) {
+                                        if (data.hasOwnProperty(key)) {
+                                            output.push({
+                                                period: key,
+                                                balance: Number(rand1() * data[key]).toFixed(2),
+                                                debit_and_credit: data[key]
+                                            });
+                                            pointSize++;
+                                        }
+                                    }
+
+                                    console.log("OUTPUT HERE ::" + output)
+
+                                        Morris.Area({
+                                            element: 'morris-area-chart',
+                                            data: output,
+                                            xkey: 'period',
+                                            ykeys: ['balance', 'debit_and_credit'],
+                                            labels: ['Projected Balance', 'Total Projected Expenses'],
+                                            pointSize: pointSize,
+                                            hideHover: 'auto',
+                                            resize: true
+                                        });
+                                    } else if (isShown == "false") {
+                                        for(var key in data) {
+                                            if ((data.hasOwnProperty(key))) {
+                                                output.push({
+                                                    period: key,
+                                                    debit_and_credit: data[key]
+                                                });
+                                                pointSize++;
+                                            }
+                                        }
+
+                                        console.log("OUTPUT HERE ::" + output)
+
+                                        Morris.Area({
+                                            element: 'morris-area-chart',
+                                            data: output,
+                                            xkey: 'period',
+                                            ykeys: ['debit_and_credit'],
+                                            labels: ['Total Projected Expenses'],
+                                            pointSize: pointSize,
+                                            hideHover: 'auto',
+                                            resize: true
+                                        });
+                                    }
+                                });
+
+
+                                function reload() {
+                                    $(chartist).data("showProjection", "true");
+                                    $(chartist).redraw()
+
+                                    console.log($(chartist).attr('data-show-projection'))
+                                }
+
+                            </script>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
+                <!-- /.col-lg-8 -->
+
+                <!--<div class="col-lg-4">-->
+                    <!--<div class="panel panel-default">-->
+                        <!--<div class="panel-heading">-->
+                            <!--<i class="fa fa-bar-chart-o fa-fw"></i> Bar Chart Example-->
+                            <!--<div class="pull-right">-->
+                                <!--<div class="btn-group">-->
+                                    <!--<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">-->
+                                        <!--Actions-->
+                                        <!--<span class="caret"></span>-->
+                                    <!--</button>-->
+                                    <!--<ul class="dropdown-menu pull-right" role="menu">-->
+                                        <!--<li><a href="#">Action</a>-->
+                                        <!--</li>-->
+                                        <!--<li><a href="#">Another action</a>-->
+                                        <!--</li>-->
+                                        <!--<li><a href="#">Something else here</a>-->
+                                        <!--</li>-->
+                                        <!--<li class="divider"></li>-->
+                                        <!--<li><a href="#">Separated link</a>-->
+                                        <!--</li>-->
+                                    <!--</ul>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--&lt;!&ndash; /.panel-heading &ndash;&gt;-->
+                        <!--<div class="panel-body">-->
+                            <!--<div class="table-responsive">-->
+                                <!--<table class="table table-bordered table-hover table-striped">-->
+                                    <!--<thead>-->
+                                    <!--<tr>-->
+                                        <!--<th>#</th>-->
+                                        <!--<th>Date</th>-->
+                                        <!--<th>Time</th>-->
+                                        <!--<th>Amount</th>-->
+                                    <!--</tr>-->
+                                    <!--</thead>-->
+                                    <!--<tbody>-->
+                                    <!--<tr>-->
+                                        <!--<td>3326</td>-->
+                                        <!--<td>10/21/2013</td>-->
+                                        <!--<td>3:29 PM</td>-->
+                                        <!--<td>$321.33</td>-->
+                                    <!--</tr>-->
+                                    <!--<tr>-->
+                                        <!--<td>3325</td>-->
+                                        <!--<td>10/21/2013</td>-->
+                                        <!--<td>3:20 PM</td>-->
+                                        <!--<td>$234.34</td>-->
+                                    <!--</tr>-->
+                                    <!--<tr>-->
+                                        <!--<td>3324</td>-->
+                                        <!--<td>10/21/2013</td>-->
+                                        <!--<td>3:03 PM</td>-->
+                                        <!--<td>$724.17</td>-->
+                                    <!--</tr>-->
+                                    <!--<tr>-->
+                                        <!--<td>3323</td>-->
+                                        <!--<td>10/21/2013</td>-->
+                                        <!--<td>3:00 PM</td>-->
+                                        <!--<td>$23.71</td>-->
+                                    <!--</tr>-->
+                                    <!--<tr>-->
+                                        <!--<td>3322</td>-->
+                                        <!--<td>10/21/2013</td>-->
+                                        <!--<td>2:49 PM</td>-->
+                                        <!--<td>$8345.23</td>-->
+                                    <!--</tr>-->
+                                    <!--<tr>-->
+                                        <!--<td>3321</td>-->
+                                        <!--<td>10/21/2013</td>-->
+                                        <!--<td>2:23 PM</td>-->
+                                        <!--<td>$245.12</td>-->
+                                    <!--</tr>-->
+                                    <!--<tr>-->
+                                        <!--<td>3320</td>-->
+                                        <!--<td>10/21/2013</td>-->
+                                        <!--<td>2:15 PM</td>-->
+                                        <!--<td>$5663.54</td>-->
+                                    <!--</tr>-->
+                                    <!--<tr>-->
+                                        <!--<td>3319</td>-->
+                                        <!--<td>10/21/2013</td>-->
+                                        <!--<td>2:13 PM</td>-->
+                                        <!--<td>$943.45</td>-->
+                                    <!--</tr>-->
+                                    <!--</tbody>-->
+                                <!--</table>-->
+                            <!--</div>-->
+                            <!--&lt;!&ndash; /.table-responsive &ndash;&gt;-->
+                        <!--</div>-->
+                        <!--&lt;!&ndash; /.panel-body &ndash;&gt;-->
+                    <!--</div>-->
+                    <!--&lt;!&ndash; /.panel &ndash;&gt;-->
+                <!--</div>-->
+            </div>
+
+<form role="form" action="/forecast" method="post">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Project 2
+                </div>
+                <div class="panel-body">
+                    <div class="col-lg-8">
+
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <label>Sunk in cost</label>
+                            </div>
+                            <div class="col-lg-8">
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">$</span>
+                                    <input type="text" class="form-control">
+                                    <span class="input-group-addon">.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <button type="button" class="btn btn-danger">Delete this Project</button>
+                            <button type="button" class="btn btn-primary" onclick="window.location='./deali'">Update this Project</button>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <label>Forecasting Data for Project 2</label>
+                        <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
+                            <tbody>
+                            <tr class="odd gradeX">
+                                <td>Average Expenses</td>
+                                <td>-</td>
+                            </tr>
+                            <tr class="odd gradeX">
+                                <td>Average Revenue</td>
+                                <td>-</td>
+                            </tr>
+                            <tr class="odd gradeX">
+                                <td>Average Balances</td>
+                                <td>-</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+</form>
+        </div>
+
+        {% endblock %}
+    </div>
+    <!-- ... Your content goes here ... -->
 </div>
-{% endblock %}

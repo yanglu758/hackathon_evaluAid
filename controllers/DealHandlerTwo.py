@@ -75,7 +75,7 @@ class DealHandler(webapp2.RequestHandler):
 
     # TODO: Set as POST in the end
     def get(self):
-        template = JINJA_ENVIRONMENT.get_template('deal.html')
+        template = JINJA_ENVIRONMENT.get_template('deali.html')
 
         # Transaction History
         response = urlfetch.Fetch(
