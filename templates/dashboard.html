@@ -32,6 +32,22 @@
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+
+    <!-- jQuery -->
+    <script src="js/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Metis Menu Plugin JavaScript -->
+    <script src="js/metisMenu.min.js"></script>
+
+    <!-- Custom Theme JavaScript -->
+    <script src="js/startmin.js"></script>
+
+    <!-- Morris Charts JavaScript -->
+    <script src="js/raphael.min.js"></script>
+    <script src="js/morris.min.js"></script>
     <![endif]-->
 </head>
 <body>
@@ -274,6 +290,42 @@
                         <!-- /.panel-heading -->
                         <div class="panel-body">
                             <div id="morris-area-chart"></div>
+                            <script>
+                                var graph_data = "{{ graph| safe }}";
+                                console.log(typeof graph_data);
+                                graph_data = graph_data.replace(/'/g, '"');
+                                console.log(graph_data);
+                                var graph = JSON.parse(graph_data);
+                                console.log(graph);
+                                var data = graph['debit_and_credit'];
+                                var pointSize=0;
+                                var output = [];
+
+                                for(var key in data) {
+                                    if (data.hasOwnProperty(key)) {
+                                        output.push({
+                                            period: key,
+                                            debit_and_credit: data[key]
+                                        });
+                                        pointSize++;
+                                    }
+                                }
+                                console.log(output);
+                                console.log(pointSize);
+
+                                $(function() {
+                                    Morris.Area({
+                                        element: 'morris-area-chart',
+                                        data: output,
+                                        xkey: 'period',
+                                        ykeys: ['debit_and_credit'],
+                                        labels: ['debit_and_credit'],
+                                        pointSize: pointSize,
+                                        hideHover: 'auto',
+                                        resize: true
+                                    });
+                                });
+                            </script>
                         </div>
                         <!-- /.panel-body -->
                     </div>
@@ -383,19 +435,6 @@
     <!-- ... Your content goes here ... -->
 </div>
 
-</div>
-
-<!-- jQuery -->
-<script src="js/jquery.min.js"></script>
-
-<!-- Bootstrap Core JavaScript -->
-<script src="js/bootstrap.min.js"></script>
-
-<!-- Metis Menu Plugin JavaScript -->
-<script src="js/metisMenu.min.js"></script>
-
-<!-- Custom Theme JavaScript -->
-<script src="js/startmin.js"></script>
 
 </body>
 </html>
