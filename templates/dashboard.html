@@ -113,13 +113,16 @@
                     </li>
 
                     <li>
-                        <a href="#" class="active"><i class="fa fa-dashboard fa-fw"></i> Overview</a>
+                        <a href="/" class="active"><i class="fa fa-dashboard fa-fw"></i> Overview</a>
                     </li>
                     <li>
-                        <a href="#" class="active"><i class="fa fa-dashboard fa-fw"></i> Project</a>
+                        <a href="/project" class="active"><i class="fa fa-dashboard fa-fw"></i> Forecast</a>
                     </li>
                     <li>
-                        <a href="#" class="active"><i class="fa fa-dashboard fa-fw"></i> Deal</a>
+                        <a href="/deal" class="active"><i class="fa fa-dashboard fa-fw"></i> Deal</a>
+                    </li>
+                    <li>
+                        <a href="/expense" class="active"><i class="fa fa-dashboard fa-fw"></i> Expense</a>
                     </li>
                     <!--<li>-->
                     <!--<a href="#"><i class="fa fa-sitemap fa-fw"></i> Multi-Level Dropdown<span class="fa arrow"></span></a>-->
@@ -142,12 +145,11 @@
             </div>
         </div>
     </nav>
-
-    {% block content %}
-
     <!-- Page Content -->
     <div id="page-wrapper">
         <div class="container-fluid">
+
+            {% block content %}
 
             <div class="row">
                 <div class="col-lg-12">
@@ -283,10 +285,12 @@
                     <!-- /.panel -->
                 </div>
             </div>
+
+            {% endblock %}
         </div>
         <!-- ... Your content goes here ... -->
     </div>
-    {% endblock %}
+
 </div>
 
 <!-- jQuery -->

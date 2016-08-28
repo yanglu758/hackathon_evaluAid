@@ -7,7 +7,7 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 )
 
 
-class ProjectHandler(webapp2.RequestHandler):
+class DealHandler(webapp2.RequestHandler):
     def get(self):
-        template = JINJA_ENVIRONMENT.get_template('project.html')
+        template = JINJA_ENVIRONMENT.get_template('deal.html')
         self.response.out.write(template.render())
