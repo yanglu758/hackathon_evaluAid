@@ -1,0 +1,8 @@
+README.txt
+simplify/__init__.py
+simplify/constants.py
+simplify/domain.py
+simplifycommerce_sdk_python.egg-info/PKG-INFO
+simplifycommerce_sdk_python.egg-info/SOURCES.txt
+simplifycommerce_sdk_python.egg-info/dependency_links.txt
+simplifycommerce_sdk_python.egg-info/top_level.txt
