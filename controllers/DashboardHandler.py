@@ -1,7 +1,6 @@
 import ast
 import jinja2
 import os
-import pydash
 import urllib2
 import webapp2
 
@@ -14,8 +13,8 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 )
 
 class DashboardHandler(webapp2.RequestHandler):
-    url = "http://api108094sandbox.gateway.akana.com/IVRCCMaintenanceREST/account/transactionHistory"
-    hardcodedData = {
+    transaction_history_url = "http://api108094sandbox.gateway.akana.com/IVRCCMaintenanceREST/account/transactionHistory"
+    transaction_history_hardcodedData = {
         "transactionIdentifier": "0f8fad5b-d9cb-469f-a165-70867728950e",
         "messageIdentifier": "0f8fad5b-d9cb-469f-a165-70867728950e",
         "messageDateTime": "1999-05-31T13:20:00-05:00",
@@ -52,10 +51,53 @@ class DashboardHandler(webapp2.RequestHandler):
         }
     }
 
+    def setMonetaryValue(self, json):
+        for key, value in json.iteritems():
+            if isinstance(value, float) or isinstance(value, int):
+                json[key] = round(value, 2)
+            elif isinstance(value, dict):
+                self.setMonetaryValue(value)
+
+        return json
+
+    def monthly_processing(self, content):
+        template_values = {
+            'total_debit': 0,
+            'total_credit': 0,
+            'type_debit': {},
+            'type_credit': {}
+        }
+
+        # Iteration
+        for transaction in content:
+            amount = float(transaction['TransactionAmount'])
+            mcc_code = transaction['SICMCCCode']
+
+            # Consolidate Credit / Debit
+            if transaction.get('TransactionType') == 'Debit' and amount > 0:
+                template_values['total_debit'] += amount
+                if mcc_code in template_values['type_debit']:
+                    value = template_values.get('type_debit')[mcc_code]
+                    template_values.get('type_debit')[mcc_code] = value + amount
+                else:
+                    template_values.get('type_debit')[mcc_code] = amount
+
+            elif transaction.get('TransactionType') == 'Credit' and amount > 0:
+                template_values['total_credit'] += amount
+
+                if mcc_code in template_values['type_credit']:
+                    value = template_values.get('type_credit')[mcc_code]
+                    template_values.get('type_credit')[mcc_code] = value + amount
+                else:
+                    template_values.get('type_credit')[mcc_code] = amount
+
+        return template_values
+
     # TODO: Set as POST in the end
     def get(self):
-        response = urlfetch.fetch(url=self.url,
-                                  payload=self.hardcodedData,
+        # Transaction History
+        response = urlfetch.fetch(url=self.transaction_history_url,
+                                  payload=self.transaction_history_hardcodedData,
                                   method=urlfetch.POST,
                                   headers={
                                       "Content-Type": "application/json",
@@ -63,25 +105,13 @@ class DashboardHandler(webapp2.RequestHandler):
                                   })
 
         if response.status_code == 200:
-            template_values = {
-                'debit': 0,
-                'credit': 0
-            }
-
             # Content
             content = ast.literal_eval(response.content)\
                 .get('CCTranHistoryResponseData')\
                 .get('TransactionDetails')\
                 .get('TransactionData')
 
-            # Iteration
-            for transaction in content:
-                amount = float(transaction['TransactionAmount'])
-
-                if transaction.get('TransactionType') == 'Debit' and amount > 0:
-                    template_values['debit'] += amount
-                elif transaction.get('TransationType') == 'Credit' and amount > 0:
-                    template_values['credit'] += amount
+            template_values = self.setMonetaryValue(self.monthly_processing(content))
 
             # template = JINJA_ENVIRONMENT.get_template('dashboard.html')
             # self.response.write(template.render(template_values))
