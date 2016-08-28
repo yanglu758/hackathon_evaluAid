@@ -122,7 +122,7 @@
                         </div>
                         <!-- /.panel-heading -->
                         <div class="panel-body">
-                            <div id="morris-area-chart" data-show-projection="false"></div>
+                            <div id="morris-area-chart" data-show-projection="true"></div>
                             <script>
                                 var graph_data = "{{ graph| safe }}";
                                 console.log(typeof graph_data);
@@ -378,7 +378,7 @@
 
                         <div class="row">
                             <button type="button" class="btn btn-danger">Delete this Project</button>
-                            <button type="button" class="btn btn-primary" onclick="window.location='./forecasti'">Update this Project</button>
+                            <button type="button" class="btn btn-primary" onclick="reload()">Update this Project</button>
                         </div>
                     </div>
 
@@ -388,15 +388,15 @@
                             <tbody>
                             <tr class="odd gradeX">
                                 <td>Average Expenses</td>
-                                <td>-</td>
+                                <td>$480.85</td>
                             </tr>
                             <tr class="odd gradeX">
                                 <td>Average Revenue</td>
-                                <td>-</td>
+                                <td>$3,456.00</td>
                             </tr>
                             <tr class="odd gradeX">
                                 <td>Average Balances</td>
-                                <td>-</td>
+                                <td>$5,634.34</td>
                             </tr>
                             </tbody>
                         </table>
