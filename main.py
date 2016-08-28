@@ -27,6 +27,4 @@ from controllers.ProjectHandler import ProjectHandler
 app = webapp2.WSGIApplication([
     ('/', HomeHandler),
     ('/dashboard', DashboardHandler)
-    ('/login', LoginHandler),
-    ('/project', )
 ], debug=True)
