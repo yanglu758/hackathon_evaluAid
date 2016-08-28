@@ -5,6 +5,7 @@ import urllib2
 import webapp2
 
 from google.appengine.api import urlfetch
+from operator import itemgetter
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     autoescape=True,
@@ -65,22 +66,34 @@ class DashboardHandler(webapp2.RequestHandler):
             'total_debit': 0,
             'total_credit': 0,
             'type_debit': {},
-            'type_credit': {}
+            'type_credit': {},
+            'graph': {
+                'debit': {},
+                'credit': {}
+            }
         }
 
         # Iteration
         for transaction in content:
             amount = float(transaction['TransactionAmount'])
             mcc_code = transaction['SICMCCCode']
+            transaction_date = transaction['TransactionPostDate']
 
             # Consolidate Credit / Debit
             if transaction.get('TransactionType') == 'Debit' and amount > 0:
                 template_values['total_debit'] += amount
+
                 if mcc_code in template_values['type_debit']:
                     value = template_values.get('type_debit')[mcc_code]
                     template_values.get('type_debit')[mcc_code] = value + amount
                 else:
                     template_values.get('type_debit')[mcc_code] = amount
+
+                if transaction_date in template_values['graph']['debit']:
+                    value = template_values['graph']['debit'][transaction_date]
+                    template_values['graph']['debit'][transaction_date] = value + amount
+                else:
+                    template_values['graph']['debit'][transaction_date] = amount
 
             elif transaction.get('TransactionType') == 'Credit' and amount > 0:
                 template_values['total_credit'] += amount
@@ -90,6 +103,12 @@ class DashboardHandler(webapp2.RequestHandler):
                     template_values.get('type_credit')[mcc_code] = value + amount
                 else:
                     template_values.get('type_credit')[mcc_code] = amount
+
+                if transaction_date in template_values['graph']['credit']:
+                    value = template_values['graph']['credit'][transaction_date]
+                    template_values['graph']['credit'][transaction_date] = value + amount
+                else:
+                    template_values['graph']['credit'][transaction_date] = amount
 
         return template_values
 
@@ -106,16 +125,21 @@ class DashboardHandler(webapp2.RequestHandler):
 
         if response.status_code == 200:
             # Content
+
             content = ast.literal_eval(response.content)\
                 .get('CCTranHistoryResponseData')\
                 .get('TransactionDetails')\
                 .get('TransactionData')
 
-            template_values = self.setMonetaryValue(self.monthly_processing(content))
+            ordered_content = sorted(content, key=itemgetter('TransactionPostDate'))
+            ordered_content = self.monthly_processing(ordered_content)
+
+
+            ordered_content = self.setMonetaryValue(ordered_content)
 
             # template = JINJA_ENVIRONMENT.get_template('dashboard.html')
             # self.response.write(template.render(template_values))
-            self.response.write(template_values)
+            self.response.write(ordered_content)
         else:
             self.response.write("Error Code: " + response.status_code)
 
