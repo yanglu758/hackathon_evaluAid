@@ -78,14 +78,19 @@ class HomeHandler(webapp2.RequestHandler):
         template = JINJA_ENVIRONMENT.get_template('dashboard.html')
 
         # Transaction History
-        response = urlfetch.fetch(
-            url=self.transaction_history_url,
-            payload=self.transaction_history_hardcodedData,
+        response = urlfetch.Fetch(
+            self.transaction_history_url,
+            payload=str(self.transaction_history_hardcodedData),
             method=urlfetch.POST,
             headers = {
+                'vary': 'Accept-Encoding',
                 "Content-Type": "application/json",
                 "Accept": "application/json"
-            }
+            },
+            allow_truncated=False,
+            follow_redirects=True,
+            deadline=None,
+            validate_certificate=None
         )
 
         if response.status_code == 200:
@@ -99,7 +104,7 @@ class HomeHandler(webapp2.RequestHandler):
         else:
             self.response.out.write("ERROR")
 
-        ordered_content['balance'] = self.getCurrentBalance()
+        ordered_content['balance'] = self.getCurrentBalance
         ordered_content['revenue'] = 10000
         self.response.out.write(template.render(ordered_content))
 
@@ -162,15 +167,21 @@ class HomeHandler(webapp2.RequestHandler):
                     template_values['graph']['credit'][transaction_date] = amount
         return template_values
 
+    @property
     def getCurrentBalance(self):
         # Bank Account
-        response = urlfetch.fetch(url=self.bank_account_url,
-                                  payload=self.bank_account_hardcodedData,
+        response = urlfetch.Fetch(self.bank_account_url,
+                                  payload=str(self.bank_account_hardcodedData),
                                   method=urlfetch.POST,
                                   headers={
+                                      'vary': 'Accept-Encoding',
                                       "Content-Type": "application/json",
                                       "Accept": "application/json"
-                                  })
+                                  },
+                                  allow_truncated=False,
+                                  follow_redirects=True,
+                                  deadline=None,
+                                  validate_certificate=None)
 
         if response.status_code == 200:
             content = ast.literal_eval(response.content)

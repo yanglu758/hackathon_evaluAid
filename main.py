@@ -21,11 +21,11 @@ import webapp2
 # local imports
 from controllers.HomeHandler import HomeHandler
 from controllers.LoginHandler import LoginHandler
-from controllers.ProjectHandler import ProjectHandler
+from controllers.ForecastHandler import ForecastHandler
 from controllers.DealHandler import DealHandler
 
 app = webapp2.WSGIApplication([
     ('/', HomeHandler),
-    ('/project', ProjectHandler),
+    ('/forecast', ForecastHandler),
     ('/deal', DealHandler)
 ], debug=True)

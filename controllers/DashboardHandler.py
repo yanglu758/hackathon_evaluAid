@@ -187,4 +187,3 @@ class DashboardHandler(webapp2.RequestHandler):
             self.response.write(ordered_content)
         else:
             self.response.write("Error Code: " + response.status_code)
-
