@@ -13,6 +13,29 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 )
 
 class DashboardHandler(webapp2.RequestHandler):
+    bank_account_url = "http://api108087sandbox.gateway.akana.com/AccountDetailRESTService/account/details"
+    bank_account_hardcodedData = {
+        "transactionIdentifier": "368c07ac-3c9e-41b0-8cc9-9f3405e37fb1",
+        "messageIdentifier": "5feff82f-4603-4996-a0e6-bf105654f2b3",
+        "messageDateTime": "2015-11-19T20:14:33.651Z",
+        "messageSequenceIdentifier": "1",
+        "requestorInfo": {
+            "serverIdentifier": "local",
+            "componentIdentifier": "***"
+        },
+        "getAccountDetailRequest": {
+            "getAccountDetail": {
+                "accountKeyIdentifier": {
+                    "operatingCompanyIdentifier": "125",
+                    "productCode": "CHX",
+                    "primaryIdentifier": "4444444444444444"
+                },
+                "returnFiveStarPackageCodeSwitch": "true",
+                "includeAddressSwitch": "true"
+            }
+        }
+    }
+
     transaction_history_url = "http://api108094sandbox.gateway.akana.com/IVRCCMaintenanceREST/account/transactionHistory"
     transaction_history_hardcodedData = {
         "transactionIdentifier": "0f8fad5b-d9cb-469f-a165-70867728950e",
@@ -111,6 +134,31 @@ class DashboardHandler(webapp2.RequestHandler):
 
         return template_values
 
+    def getCurrentBalance(self):
+        # Bank Account
+        response = urlfetch.fetch(url=self.bank_account_url,
+                                  payload=self.bank_account_hardcodedData,
+                                  method=urlfetch.POST,
+                                  headers={
+                                      "Content-Type": "application/json",
+                                      "Accept": "application/json"
+                                  })
+
+        if response.status_code == 200:
+            content = ast.literal_eval(response.content)
+
+            current_balance = content\
+                .get('DetailAccountList')\
+                .get('CardAccount')\
+                .get('AccountDetail')\
+                .get('Amounts')\
+                .get('DDAAvailableBalanceAmount')
+
+            return current_balance
+        else:
+            return "Something went wrong - Please try again"
+
+
     # TODO: Set as POST in the end
     def get(self):
         # Transaction History
@@ -132,6 +180,7 @@ class DashboardHandler(webapp2.RequestHandler):
 
             ordered_content = self.monthly_processing(content)
             ordered_content = self.setMonetaryValue(ordered_content)
+            ordered_content['current_balance'] = self.getCurrentBalance()
 
             # template = JINJA_ENVIRONMENT.get_template('dashboard.html')
             # self.response.write(template.render(template_values))
